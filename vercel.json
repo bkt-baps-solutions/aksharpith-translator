@@ -1,13 +1,10 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "regions": ["lhr1"],
   "functions": {
-    "app/api/translate/route.ts": {
-      "maxDuration": 30
-    },
-    "app/api/translate/[jobId]/run/route.ts": {
-      "maxDuration": 300
-    },
-    "app/api/upload/route.ts": {
-      "maxDuration": 300
-    }
+    "app/api/upload/route.ts": { "maxDuration": 300 },
+    "app/api/blob-token/route.ts": { "maxDuration": 60 },
+    "app/api/jobs/[id]/route.ts": { "maxDuration": 30 }
   }
 }

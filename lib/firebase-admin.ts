@@ -1,3 +1,10 @@
+// Firebase Admin SDK initialiser. Service-account credentials come from env;
+// for local dev we fall back to GOOGLE_APPLICATION_CREDENTIALS.
+//
+// Shares the `aksharpith-translator` Firestore project with Mandir/web — but
+// writes to a SEPARATE collection (`handwritingJobs`) so the two workers do
+// not contend for jobs.
+
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
@@ -10,7 +17,6 @@ if (getApps().length === 0) {
   if (clientEmail && privateKey) {
     initializeApp({ credential: cert({ projectId, clientEmail, privateKey }) });
   } else {
-    // Fallback: try loading from service account file (local dev)
     initializeApp({ projectId });
   }
 }

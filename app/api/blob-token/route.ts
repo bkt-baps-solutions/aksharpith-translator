@@ -1,9 +1,3 @@
-import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
-import { NextRequest } from 'next/server';
-import { adminAuth } from '../../../lib/firebase-admin';
-
-export const dynamic = 'force-dynamic';
-
 // Vercel Blob upload-token handshake. The client SDK fetches this route to
 // obtain a signed token; it then PUTs the file directly to Blob storage,
 // bypassing Vercel's 4.5 MB serverless body limit.
@@ -12,13 +6,17 @@ export const dynamic = 'force-dynamic';
 // Bearer token). Instead the client passes the Firebase ID token through the
 // SDK's `clientPayload` field and we verify it inside onBeforeGenerateToken.
 //
-// MIME allowlist mirrors the upload route's accepted extensions.
+// Mirrors Mandir/web's identical route.
+
+import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
+import { NextRequest } from 'next/server';
+import { adminAuth } from '../../../lib/firebase-admin';
+
+export const dynamic = 'force-dynamic';
+
 const ALLOWED_CONTENT_TYPES = [
   'application/pdf',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
-  'application/msword', // .doc
-  'text/plain',
-  'image/png', 'image/jpeg', 'image/webp', 'image/gif',
+  'image/png', 'image/jpeg', 'image/webp',
 ];
 
 const MAX_BYTES = 100 * 1024 * 1024;
@@ -31,8 +29,6 @@ export async function POST(req: NextRequest) {
       body,
       request: req,
       onBeforeGenerateToken: async (pathname, clientPayload) => {
-        // clientPayload carries the Firebase ID token (plus optional metadata).
-        // It's required — without it we cannot identify the user.
         if (!clientPayload) throw new Error('Missing auth token');
         let firebaseToken: string;
         try {
@@ -49,8 +45,6 @@ export async function POST(req: NextRequest) {
         } catch {
           throw new Error('Invalid Firebase token');
         }
-        // Storage path convention: uploads/{uid}/... — confirm the client
-        // didn't try to write to someone else's folder.
         if (!pathname.startsWith(`uploads/${uid}/`)) {
           throw new Error('Forbidden upload path');
         }
@@ -61,9 +55,6 @@ export async function POST(req: NextRequest) {
         };
       },
       onUploadCompleted: async ({ blob, tokenPayload }) => {
-        // Server-to-server callback fired by Vercel after the client PUT
-        // completes. No client action needed; the browser independently POSTs
-        // the blob URL to /api/upload to trigger extraction.
         const payload = tokenPayload ? JSON.parse(tokenPayload) as { uid: string } : null;
         console.log(`[blob] upload completed: ${blob.url} (uid=${payload?.uid ?? 'unknown'})`);
       },

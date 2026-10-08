@@ -1,39 +1,16 @@
-import type { Metadata } from 'next';
-import { Cormorant_Garamond } from 'next/font/google';
-import { GeistSans } from 'geist/font/sans';
-import { GeistMono } from 'geist/font/mono';
-import './globals.css';
-import { AuthProvider } from '../lib/auth-context';
+// Headless backend service — no UI ships here. The frontend lives in
+// translation-tool/. We only render this minimal layout so Next.js' build
+// step is happy.
 
-const cormorant = Cormorant_Garamond({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  style: ['normal', 'italic'],
-  variable: '--font-cormorant',
-  display: 'swap',
-});
-
-export const metadata: Metadata = {
-  title: 'Aksharpith — Transliteration & Translation',
-  description: 'Gujarati transliteration pipeline (page-by-page OCR) with optional English translation — Aksharpith house style',
-  icons: {
-    icon: '/favicon.ico',
-    apple: '/apple-icon.png',
-  },
+export const metadata = {
+  title: 'transliterator-baps API',
+  description: 'Backend service for handwritten Gujarati transliteration.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      className={`${GeistSans.variable} ${GeistMono.variable} ${cormorant.variable}`}
-    >
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      </head>
-      <body className="font-sans bg-background text-foreground antialiased">
-        <AuthProvider>{children}</AuthProvider>
-      </body>
+    <html lang="en">
+      <body>{children}</body>
     </html>
   );
 }

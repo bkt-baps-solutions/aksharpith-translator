@@ -1,11 +1,19 @@
-.env.local
-.env*.local
-*Service Account*.json
 node_modules/
 .next/
+.vercel/
 out/
 *.tsbuildinfo
-.vercel
-logs/
-extractions/
-scripts/_*.mjs
+
+.env
+.env.local
+.env.*.local
+
+*-eval.md
+!samples/*-eval.md
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/

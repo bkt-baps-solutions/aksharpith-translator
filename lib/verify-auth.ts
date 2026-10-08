@@ -1,3 +1,7 @@
+// Bearer-token auth shim. Mints from translation-tool's /api/firebase-token
+// (planned) — service-to-service trust is established by Firebase Admin
+// verifyIdToken: only IDs minted by our Firebase project pass.
+
 import { adminAuth } from './firebase-admin';
 
 export async function verifyAuthToken(req: Request): Promise<{ uid: string; email: string } | null> {
